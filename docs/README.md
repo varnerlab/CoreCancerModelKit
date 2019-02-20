@@ -1,1 +1,1 @@
-Documentation for the [CoreCancerModelKit](https://varnerlab.github.io/CoreEcoliModelKit/)
+Documentation for the [CoreCancerModelKit](https://varnerlab.github.io/CoreCancerModelKit/)
