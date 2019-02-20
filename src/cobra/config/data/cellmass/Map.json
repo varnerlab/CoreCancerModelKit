@@ -1,0 +1,17 @@
+{
+  "LINE_HL_60_TB":{
+    "cellmass_file_name":"HL60-Biomass.csv"
+  },
+  "LINE_MCF7":{
+    "cellmass_file_name":"MCF7-Biomass.csv"
+  },
+  "LINE_MDA_MB_435":{
+    "cellmass_file_name":"MDA_MB_435-Biomass.csv"
+  },
+  "LINE_MDA_MB_231_ATCC":{
+    "cellmass_file_name":"MDA_MB_231_ATCC-Biomass.csv"
+  },
+  "LINE_T_47D":{
+    "cellmass_file_name":"LINE_T_47D-Biomass.csv"
+  }
+}
