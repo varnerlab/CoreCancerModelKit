@@ -7,10 +7,10 @@
 # const organism_id = :eco    # we use the KEGG organism symbols
 # const path_to_measurements_file = "$(pwd())/experimental_data/test_data/Glucose.json"
 
-function moma_calculation(flux_soln_array, flux_bounds_array, ko_index)
+function moma_calculation(organism_id, flux_soln_array, flux_bounds_array, ko_index)
 
     # load the default data_dictionary -
-    default_data_dictionary = generate_default_data_dictionary(path_to_cobra_mat_file, model_file_name, organism_id);
+    default_data_dictionary = generate_default_data_dictionary(organism_id);
 
     # pass the default dictionary to a customization method -
     updated_data_dictionary = optimize_specific_growth_rate(default_data_dictionary);

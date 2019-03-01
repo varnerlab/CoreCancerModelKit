@@ -16,6 +16,7 @@ using ProgressMeter
 
 # constants -
 const path_to_package = dirname(pathof(@__MODULE__))
+const glucose_uptake_index = 202   # HEX1
 
 # local code -
 include("./flux/Flux.jl")

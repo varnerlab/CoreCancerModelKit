@@ -39,44 +39,41 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
     flux_bounds_array = data_dictionary["flux_bounds_array"]
     (number_of_reactions,nc) = size(flux_bounds_array)
 
-    # # do we have any flux ratios?
-    # flux_ratio_dictionary_array = measurements_dictionary["flux_ratio_measurements"]
-    #
-    # # initialize -
-    # number_of_additional_constraints = length(flux_ratio_dictionary_array)
-    # constraint_counter = 1
-    # additional_constraint_array = zeros(number_of_additional_constraints,number_of_reactions)
-    # for (reaction_key, local_measurement_dict) in flux_ratio_dictionary_array
-    #
-    #     # ok, so we have a reaction key - find the index of this reaction in the reaction list -
-    #     idx_reaction_match = findall(rxn_name_list .== reaction_key)
-    #
-    #     # if we have this reaction, then update the bounds array -
-    #     if (isempty(idx_reaction_match) == false)
-    #
-    #         # all fluxes are relative to glucose -
-    #         glucose_uptake_index = 50   # GLCpts -
-    #
-    #         # get ratio value -
-    #         ratio_value = parse(Float64,local_measurement_dict["mean_value"])
-    #
-    #         # get the actual index -
-    #         idx_reaction = (getindex(idx_reaction_match))[1]
-    #
-    #         # update the constraint -
-    #         additional_constraint_array[constraint_counter,idx_reaction] = 1.0
-    #         additional_constraint_array[constraint_counter,glucose_uptake_index] = -1*ratio_value
-    #
-    #         # update -
-    #         constraint_counter = constraint_counter + 1
-    #     end
-    # end
-    #
-    # # cache the additional constraints -
-    # data_dictionary["additional_constraint_array"] = additional_constraint_array
+    # do we have any flux ratios?
+    flux_ratio_dictionary_array = measurements_dictionary["flux_ratio_measurements"]
+
+    # initialize -
+    number_of_additional_constraints = length(flux_ratio_dictionary_array)
+    constraint_counter = 1
+    additional_constraint_array = zeros(number_of_additional_constraints,number_of_reactions)
+    for (reaction_key, local_measurement_dict) in flux_ratio_dictionary_array
+
+        # ok, so we have a reaction key - find the index of this reaction in the reaction list -
+        idx_reaction_match = findall(rxn_name_list .== reaction_key)
+
+        # if we have this reaction, then update the bounds array -
+        if (isempty(idx_reaction_match) == false)
+
+            # get ratio value -
+            ratio_value = parse(Float64,local_measurement_dict["mean_value"])
+
+            # get the actual index -
+            idx_reaction = (getindex(idx_reaction_match))[1]
+
+            # update the constraint -
+            additional_constraint_array[constraint_counter,idx_reaction] = 1.0
+            additional_constraint_array[constraint_counter,glucose_uptake_index] = -1*ratio_value
+
+            # update -
+            constraint_counter = constraint_counter + 1
+        end
+    end
+
+    # cache the additional constraints -
+    data_dictionary["additional_constraint_array"] = additional_constraint_array
 
     # iterate through the measurements_dictionary and set values -
-    individual_measuerment_dictionaries = measurements_dictionary["flux_measurements"]
+    individual_measuerment_dictionaries = measurements_dictionary["exchange_flux_measurements"]
     for (reaction_key, local_measurement_dict) in individual_measuerment_dictionaries
 
         # ok, so we have a reaction key - find the index of this reaction in the reaction list -
@@ -233,6 +230,48 @@ function find_index_of_species(list_of_species,species_symbol)
 end
 
 
+function constrain_measured_metabolites(data_dictionary::Dict{String,Any}, path_to_measurements_file::String)
+
+    # from the data dictionary, get the list of metabolite symbols -
+    list_of_metabolite_symbols = data_dictionary["list_of_metabolite_symbols"]
+
+    # load the measurements file -
+    measurements_dictionary = JSON.parsefile(path_to_measurements_file)
+
+    # get the stoichiometric_matrix -
+    stoichiometric_matrix = copy(data_dictionary["stoichiometric_matrix"])
+
+    # get the metabolite measurement information -
+    absolute_metabolite_measurement_dictionary = measurements_dictionary["absolute_metabolite_measurements"]
+    for (metabolite_key, local_measurement_dict) in absolute_metabolite_measurement_dictionary
+
+        # ok, so we have a metabolite_key - find the index of this metabolite in the metabolite list -
+        idx_metabolite_match = findall(list_of_metabolite_symbols .== metabolite_key)
+
+        # if we have this metabolite, update the STM -
+        if (isempty(idx_metabolite_match) == false)
+
+            # get experimental values -
+            mean_ratio_value = parse(Float64,local_measurement_dict["mean_value"])
+            lower_bound = parse(Float64,local_measurement_dict["lower_bound"])
+            upper_bound = parse(Float64,local_measurement_dict["upper_bound"])
+
+            # compute a value -
+            r_value = rand()
+            value = (1 - r_value)*lower_bound + r_value*(upper_bound)
+
+            # update the stm -> the growth rate is *always at the end, last reaction*
+            metabolite_index = (getindex(idx_metabolite_match))[1]
+            old_value = stoichiometric_matrix[metabolite_index,end]
+            stoichiometric_matrix[metabolite_index,end] = (old_value - value)
+        end
+    end
+
+    data_dictionary["stoichiometric_matrix"] = stoichiometric_matrix
+    return data_dictionary
+end
+
+
 """
 TODO: Fill me in with some stuff ...
 """
@@ -319,7 +358,7 @@ function generate_default_data_dictionary(organism_id::Symbol)
 
     # add default growth rate constraint?
     default_flux_bounds_array[end,1] = 0.0
-    default_flux_bounds_array[end,2] = 0.1
+    default_flux_bounds_array[end,2] = 1.0
 
     # build reversible reaction flag array -
     reversible_reaction_flag_array = ones(number_of_reactions)
@@ -358,8 +397,6 @@ function generate_default_data_dictionary(organism_id::Symbol)
 
     # update the default bounds array w/our "default" biophysical_constants -
     flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
-    # flux_bounds_array = default_flux_bounds_array
-
 
     # create list of reaction strings -
     list_of_reaction_tags = cobra_dictionary["rxns"]
@@ -373,13 +410,6 @@ function generate_default_data_dictionary(organism_id::Symbol)
 
     # setup default additional constaints array -
     number_of_additional_constraints = 0
-    # (number_of_reactions,nc) = size(flux_bounds_array)
-    # additional_constraint_array = zeros(number_of_additional_constraints, number_of_reactions)
-
-    # species bounds array - default, everything is bounded 0,0
-    # species in the [e] (extracellular) compartment are unbounded
-    # we have *updated* the STM w/exchange reactions [] -> a and a -> []
-    # all species are bounded to 0
     species_bounds_array = zeros((number_of_species + number_of_additional_constraints),2)
 
     # =============================== DO NOT EDIT BELOW THIS LINE ============================== #
@@ -397,9 +427,6 @@ function generate_default_data_dictionary(organism_id::Symbol)
 	data_dictionary["is_minimum_flag"] = is_minimum_flag
     data_dictionary["reversible_reaction_flag_array"] = reversible_reaction_flag_array
     data_dictionary["model_vmax_array"] = model_vmax_array
-    #data_dictionary["tmp_fba"] = tmp_flux_bounds_array
-    #data_dictionary["exchange_flux_index_array"] = exchange_flux_index_array
-    #data_dictionary["additional_constraint_array"] = additional_constraint_array
 
     # stuff for rules -
     data_dictionary["default_vmax"] = default_vmax

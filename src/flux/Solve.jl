@@ -96,6 +96,7 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
 
         # update dictionary with experimental data?
         updated_data_dictionary = constrain_measured_fluxes(updated_data_dictionary, path_to_measurements_file);
+        updated_data_dictionary = constrain_measured_metabolites(updated_data_dictionary, path_to_measurements_file);
 
         # estimate the optimal flux distrubution -
         (objective_value, calculated_flux_array, dual_value_array, uptake_array, exit_flag, status_flag) = calculate_optimal_flux_distribution(updated_data_dictionary);

@@ -17,6 +17,7 @@ function calculate_gradient!(G,flux_vector,STM,W)
 
     # compute the grad -
     tmp_vector = transpose(residual)*(transpose(W)+W)*STM
+
     index = 1
     for value in tmp_vector
         G[index] = value
@@ -24,7 +25,7 @@ function calculate_gradient!(G,flux_vector,STM,W)
     end
 end
 
-function sample_flux_space(solution_bounds_array::Array{Float64,2}, data_dictionary::Dict{String,Any}, number_of_samples::Int64)
+function sample_flux_space(solution_bounds_array::Array{Float64,2}, data_dictionary::Dict{String,Any}; number_of_samples::Int64 = 100)
 
     # Declare a progress meter for user feedback -
     p = Progress(number_of_samples,color=:yellow)
@@ -58,7 +59,7 @@ function sample_flux_space(solution_bounds_array::Array{Float64,2}, data_diction
         q_vector = lower_bound_array.*sample + (1 .- sample).*upper_bound_array
 
         # make a call to the optim package -
-        result = optimize(objective_function,gradient_function!,lower_bound_array, upper_bound_array, q_vector, Fminbox(LBFGS()))
+        result = Optim.optimize(objective_function,gradient_function!,lower_bound_array, upper_bound_array, q_vector, Fminbox(LBFGS()))
 
         # get the flux -
         flux = Optim.minimizer(result)
