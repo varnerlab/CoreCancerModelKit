@@ -31,7 +31,7 @@
         "directionality":"output_fixed"
     },
     "EX_glc(e)":{
-        "mean_value":"0.16826859653932702",
+        "mean_value":"0.016826859653932702",
         "coefficient_of_variation":"0.41001442994819676",
         "units":"mmol/gDW-hr",
         "directionality":"input_fixed"

@@ -1,0 +1,182 @@
+{
+
+  "absolute_metabolite_measurements": {
+    "atp[c]": {
+      "units": "mmol/gDW",
+      "lower_bound": "0.00574286",
+      "mean_value": "0.0111746",
+      "upper_bound": "0.0166064"
+    },
+    "adp[c]": {
+      "units": "mmol/gDW",
+      "lower_bound": "0.00108157",
+      "mean_value": "0.00136154",
+      "upper_bound": "0.00171089"
+    },
+    "amp[c]": {
+      "units": "mmol/gDW",
+      "lower_bound": "8.5425e-5",
+      "mean_value": "0.000101218",
+      "upper_bound": "0.000120121"
+    }
+  },
+  "exchange_flux_measurements": {
+    "EX_glc(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "input_fixed",
+      "coefficient_of_variation": "0.1195165112794931",
+      "mean_value": "0.5426779209245598"
+    },
+    "EX_glu_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.8187690973883602",
+      "mean_value": "1.3433263029423161"
+    },
+    "EX_thr_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.7303071880377134",
+      "mean_value": "0.4395367241365207"
+    },
+    "EX_nh4(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.2",
+      "mean_value": "10.0"
+    },
+    "EX_o2(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "input",
+      "coefficient_of_variation": "0.01",
+      "mean_value": "0.4"
+    },
+    "EX_lac_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "output",
+      "coefficient_of_variation": "0.10514634745890922",
+      "mean_value": "0.4223750493806413"
+    },
+    "EX_ala_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.8065500623409667",
+      "mean_value": "0.45205340004079"
+    },
+    "EX_his_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.8709108105720696",
+      "mean_value": "0.1970647890653722"
+    },
+    "EX_val_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.6290533079643397",
+      "mean_value": "0.5308306525069543"
+    },
+    "EX_ile_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.6820589968349794",
+      "mean_value": "0.9721736874251586"
+    },
+    "EX_gln_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.42878370634676755",
+      "mean_value": "9.356430977521297"
+    },
+    "EX_lys_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.6936344605819547",
+      "mean_value": "0.5841893515406681"
+    },
+    "EX_pro_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "1.3197328658330665",
+      "mean_value": "0.28244812983665485"
+    },
+    "EX_co2(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "output",
+      "coefficient_of_variation": "0.2",
+      "mean_value": "10.0"
+    },
+    "EX_phe_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.7439218238368166",
+      "mean_value": "0.24444038188478906"
+    },
+    "EX_leu_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.6322172671997037",
+      "mean_value": "1.0493023138922344"
+    },
+    "EX_trp_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.8367192033272369",
+      "mean_value": "0.07127195923035022"
+    },
+    "EX_ser_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.6573532452154898",
+      "mean_value": "0.7895383892088474"
+    },
+    "EX_h2o(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.2",
+      "mean_value": "10.0"
+    },
+    "EX_h(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.2",
+      "mean_value": "10.0"
+    },
+    "EX_gly(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "1.7932572810368816",
+      "mean_value": "0.0024194364110150146"
+    },
+    "EX_tyr_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.8828228180506908",
+      "mean_value": "0.2467288836396639"
+    },
+    "EX_asp_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "1.4921741367333106",
+      "mean_value": "0.19921548063852876"
+    },
+    "EX_asn_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.9801270774373377",
+      "mean_value": "0.7406308280079015"
+    },
+    "DM_atp_c_": {
+      "units": "mmol/gDW-hr",
+      "directionality": "output_fixed",
+      "coefficient_of_variation": "0.1",
+      "mean_value": "1.07"
+    },
+    "EX_arg_L(e)": {
+      "units": "mmol/gDW-hr",
+      "directionality": "free",
+      "coefficient_of_variation": "0.5194423649363852",
+      "mean_value": "5.289844543655417"
+    }
+  },
+  "flux_ratio_measurements": {}
+}
