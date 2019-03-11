@@ -7,7 +7,7 @@
 # const organism_id = :eco    # we use the KEGG organism symbols
 # const path_to_measurements_file = "$(pwd())/experimental_data/test_data/Glucose.json"
 
-function moma_calculation(organism_id, flux_soln_array, flux_bounds_array, ko_index)
+function moma_calculation(organism_id, flux_soln_array, flux_bounds_array, ko_index_array)
 
     # load the default data_dictionary -
     default_data_dictionary = generate_default_data_dictionary(organism_id);
@@ -15,10 +15,15 @@ function moma_calculation(organism_id, flux_soln_array, flux_bounds_array, ko_in
     # pass the default dictionary to a customization method -
     updated_data_dictionary = optimize_specific_growth_rate(default_data_dictionary);
 
-    # KO -
-    flux_bounds_array[ko_index,1] = 0.0
-    flux_bounds_array[ko_index,2] = 0.0
-    updated_data_dictionary["flux_bounds_array"] = flux_bounds_array
+    # remove these reactions -
+    for ko_index in ko_index_array
+
+        # KO -
+        flux_bounds_array[ko_index,1] = 0.0
+        flux_bounds_array[ko_index,2] = 0.0
+        updated_data_dictionary["flux_bounds_array"] = flux_bounds_array
+    end
+
 
     # execute MOMA calculation -
     moma_soln = moma(flux_soln_array, updated_data_dictionary)
