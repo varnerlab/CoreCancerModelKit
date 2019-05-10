@@ -201,33 +201,6 @@ function generate_path_to_cellmass_file(organism_id)
     return "$(path_to_package)/cobra/config/data/cellmass/Default-Biomass.csv"
 end
 
-function find_index_of_species(list_of_species,species_symbol)
-
-    # how many items do we have?
-    number_of_items = length(list_of_species)
-
-    location = -1
-    counter = 1
-    is_ok_to_stop = false
-    while (is_ok_to_stop == false)
-
-        # get symbol =
-        test_symbol = list_of_species[counter]
-        if (test_symbol == species_symbol)
-            is_ok_to_stop = true
-            location = counter
-        else
-
-            if (counter>=number_of_items)
-                is_ok_to_stop = true
-            end
-
-            counter = counter + 1
-        end
-    end
-
-    return location
-end
 
 
 function constrain_measured_metabolites(data_dictionary::Dict{String,Any}, path_to_measurements_file::String)
@@ -271,6 +244,15 @@ function constrain_measured_metabolites(data_dictionary::Dict{String,Any}, path_
     return data_dictionary
 end
 
+function process_model_extensions(path_to_extensions_directory::String,cobra_dictionary::Dict{String,Any})
+
+    # do we have any files in the extensions folder?
+    list_of_pathway_extensions = searchdir(path_to_extensions_directory,)
+
+    
+
+end
+
 
 """
 TODO: Fill me in with some stuff ...
@@ -281,6 +263,9 @@ function generate_default_data_dictionary(organism_id::Symbol)
     path_to_cobra_mat_file = "$(path_to_package)/cobra/config/matlab_cobra_files/modelCore.mat"
     model_name = "modelCore"
 
+    # do we have any extensions that we need to add to the model?
+    path_to_extensions_directory = "$(path_to_package)/extensions"
+
     # load the biophysical_constants dictionary -
     default_biophysical_dictionary = load_default_biophysical_dictionary(organism_id)
 
@@ -290,9 +275,16 @@ function generate_default_data_dictionary(organism_id::Symbol)
     cobra_dictionary = read(file, model_name)
     close(file)
 
+    # get some stuff that we may need later ...
+    # get the species symbol list -
+    list_of_metabolite_symbols = cobra_dictionary["mets"]
+
     # Setup: the stoichiometric matrix -
     stoichiometric_matrix = Matrix(cobra_dictionary["S"])
     (number_of_species,number_of_reactions) = size(stoichiometric_matrix)
+
+    # do we have any new species? Look in the extensions folder for new pathways -
+
 
     # we need to add the biomass equation for cellmass -
     # which cellmass defn are we using
@@ -341,8 +333,6 @@ function generate_default_data_dictionary(organism_id::Symbol)
         push!(reaction_name_array,rxn_name)
     end
 
-    # get the species symbol list -
-    list_of_metabolite_symbols = cobra_dictionary["mets"]
 
     # get list of gene symbols -
     list_of_gene_symbols = cobra_dictionary["genes"]

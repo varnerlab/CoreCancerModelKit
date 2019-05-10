@@ -1,0 +1,12 @@
+{
+  "list_of_reactions":{
+    "2.6.1.16":{
+      "reaction_string":"R1,gln_L[c]+f6p[c],glu_L[c]+D-glucosamine-6-phosphate[c]",
+      "reversible":false
+    },
+    "2.3.1.4":{
+      "reaction_string":"R2,accoa[c]+D-glucosamine-6-phosphate[c],coa[c]+N-acetyl-D-glucosamine-6-phosphate[c]",
+      "reversible":false
+    }
+  }
+}
