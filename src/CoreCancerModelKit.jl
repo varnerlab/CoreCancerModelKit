@@ -16,6 +16,8 @@ export generate_test_data_dictionary
 export optimize_flux_at_index
 export constrain_measured_fluxes
 
+export generate_csv_flux_report
+
 # export types -
 export VLOptimalFluxResult
 

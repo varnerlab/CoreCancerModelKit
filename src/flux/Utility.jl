@@ -1,5 +1,9 @@
 searchdir(path,key) = filter(x->occursin(key,x), readdir(path))
 
+function contains(string,token)
+    return occursin(token,string)
+end
+
 function find_species_in_compartment(list_of_species,compartment_string)
 
     # initialize -
@@ -29,6 +33,19 @@ function find_index_of_species(list_of_species, species_symbol)
     return findfirst(x->x=="$(species_symbol)", list_of_species)
 end
 
+function write_file_to_path(path_to_file::String,buffer::Array{String,1})
+
+    # check, is this a legit dir?
+    is_dir_path_ok(path_to_file)
+
+    # write -
+    open("$(path_to_file)", "w") do f
+
+        for line_item in buffer
+            write(f,"$(line_item)\n")
+        end
+    end
+end
 
 function reconstruct_reaction_string_list(cobra_dictionary)
 
