@@ -12,6 +12,7 @@ using DelimitedFiles
 using Optim
 using Logging
 using ProgressMeter
+using CodeGenerator
 # ------------------------------------------------------------------ #
 
 # constants -
@@ -28,3 +29,4 @@ include("./flux/Export.jl")
 include("./flux/Rules.jl")
 include("./flux/Solve.jl")
 include("./flux/MOMA.jl")
+include("ErrorChecking.jl")

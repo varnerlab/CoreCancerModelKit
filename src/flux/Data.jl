@@ -3,9 +3,42 @@ TODO: Fill me in with some stuff ...
 """
 function optimize_specific_growth_rate(data_dictionary::Dict{String,Any})
 
+    # get the list of reaction names -
+    list_of_reaction_name_strings = data_dictionary["list_of_reaction_name_strings"]
+
+    # ok, we need to find the index of the EX_ha(e) rate -
+    index_target_reaction = find_index_of_reaction(list_of_reaction_name_strings,"growth")
+    if (index_target_reaction == nothing)
+        throw(ErrorException("missing reaction tag $(target_reaction_tag)"))
+    end
+
     # update the c-vector -
     objective_coefficient_array = data_dictionary["objective_coefficient_array"]
-    objective_coefficient_array[381] = -1.0   # cellmass is always at the end -
+    objective_coefficient_array[index_target_reaction] = -1.0
+    data_dictionary["objective_coefficient_array"] = objective_coefficient_array
+
+    # return -
+    return data_dictionary
+end
+
+"""
+TODO: Fill me in with some stuff ...
+"""
+function optimize_flux_at_index(data_dictionary::Dict{String,Any}, target_reaction_tag::String)
+
+    # update the c-vector -
+    objective_coefficient_array = data_dictionary["objective_coefficient_array"]
+
+    # get the list of reaction names -
+    list_of_reaction_name_strings = data_dictionary["list_of_reaction_name_strings"]
+
+    # ok, we need to find the index of the EX_ha(e) rate -
+    index_target_reaction = find_index_of_reaction(list_of_reaction_name_strings,target_reaction_tag)
+    if (index_target_reaction == nothing)
+        throw(ErrorException("missing reaction tag $(target_reaction_tag)"))
+    end
+
+    objective_coefficient_array[index_target_reaction] = -1.0   # cellmass is always at the end -
     data_dictionary["objective_coefficient_array"] = objective_coefficient_array
 
     # return -
@@ -24,6 +57,33 @@ function optimize_flux_at_index(index_array::Array{Int64,1}, data_dictionary::Di
     for index_value in index_array
         objective_coefficient_array[index_value] = -1
     end
+
+    # return -
+    return data_dictionary
+end
+
+"""
+TODO: Fill me in with some stuff ...
+"""
+function constrain_specific_growth_rate(data_dictionary::Dict{String,Any}, path_to_growth_rate_file::String)
+
+    # TODO: check the growth rate file -
+    growth_rate_dictionary = JSON.parsefile(path_to_growth_rate_file)
+
+    # get the flux bounds -
+    copy_flux_bounds_array = deepcopy(data_dictionary["flux_bounds_array"])
+
+    # get the lower_bound, and upper_bound -
+    lower_bound = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["lower_bound"])
+    upper_bound = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["upper_bound"])
+    mean_value = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["mean_value"])
+
+    # growth rate is *always* the last value -
+    copy_flux_bounds_array[end,1] = lower_bound
+    copy_flux_bounds_array[end,2] = upper_bound
+
+    # update -
+    data_dictionary["flux_bounds_array"] = copy_flux_bounds_array
 
     # return -
     return data_dictionary
@@ -49,10 +109,10 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
     for (reaction_key, local_measurement_dict) in flux_ratio_dictionary_array
 
         # ok, so we have a reaction key - find the index of this reaction in the reaction list -
-        idx_reaction_match = findall(rxn_name_list .== reaction_key)
+        idx_reaction_match = find_index_of_reaction(rxn_name_list, reaction_key)
 
         # if we have this reaction, then update the bounds array -
-        if (isempty(idx_reaction_match) == false)
+        if (idx_reaction != nothing)
 
             # get ratio value -
             ratio_value = parse(Float64,local_measurement_dict["mean_value"])
@@ -77,10 +137,10 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
     for (reaction_key, local_measurement_dict) in individual_measuerment_dictionaries
 
         # ok, so we have a reaction key - find the index of this reaction in the reaction list -
-        idx_reaction_match = findall(rxn_name_list .== reaction_key)
+        idx_reaction_match = find_index_of_reaction(rxn_name_list, reaction_key)
 
         # if we have this reaction, then update the bounds array -
-        if (isempty(idx_reaction_match) == false)
+        if (idx_reaction_match != nothing)
 
             # get the measured value -
             mean_measured_value = parse(Float64,local_measurement_dict["mean_value"])
@@ -93,7 +153,7 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
             measured_value = abs(rand(distrubution))
 
             # get the actual index -
-            idx_reaction = (getindex(idx_reaction_match))[1]
+            idx_reaction = idx_reaction_match
 
             # what is the directionality of this measurement?
             directionality = Symbol(local_measurement_dict["directionality"])
@@ -131,6 +191,8 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
                 # TODO: issue a warning ...
                 println("Missing $(idx_reaction_match)")
             end
+        else
+            #println("missing $(reaction_key)??")
         end
     end
 
@@ -202,7 +264,6 @@ function generate_path_to_cellmass_file(organism_id)
 end
 
 
-
 function constrain_measured_metabolites(data_dictionary::Dict{String,Any}, path_to_measurements_file::String)
 
     # from the data dictionary, get the list of metabolite symbols -
@@ -244,27 +305,17 @@ function constrain_measured_metabolites(data_dictionary::Dict{String,Any}, path_
     return data_dictionary
 end
 
-function process_model_extensions(path_to_extensions_directory::String,cobra_dictionary::Dict{String,Any})
-
-    # do we have any files in the extensions folder?
-    list_of_pathway_extensions = searchdir(path_to_extensions_directory,)
-
-    
-
-end
-
-
-"""
-TODO: Fill me in with some stuff ...
-"""
-function generate_default_data_dictionary(organism_id::Symbol)
+function generate_test_data_dictionary(organism_id::Symbol)
 
     # Hardcode my path information -
-    path_to_cobra_mat_file = "$(path_to_package)/cobra/config/matlab_cobra_files/modelCore.mat"
-    model_name = "modelCore"
+    #path_to_cobra_mat_file = "$(path_to_package)/cobra/config/matlab_cobra_files/modelCore.mat"
+    #model_name = "modelCore"
 
-    # do we have any extensions that we need to add to the model?
-    path_to_extensions_directory = "$(path_to_package)/extensions"
+    # path_to_cobra_mat_file = "$(path_to_package)/cobra/config/matlab_cobra_files/CoreCancerModel_v1.mat"
+    # model_name = "CoreCancerModel_v1"
+
+    path_to_cobra_mat_file = "$(path_to_package)/cobra/config/matlab_cobra_files/Test_v1.mat"
+    model_name = "Test_v1"
 
     # load the biophysical_constants dictionary -
     default_biophysical_dictionary = load_default_biophysical_dictionary(organism_id)
@@ -283,9 +334,6 @@ function generate_default_data_dictionary(organism_id::Symbol)
     stoichiometric_matrix = Matrix(cobra_dictionary["S"])
     (number_of_species,number_of_reactions) = size(stoichiometric_matrix)
 
-    # do we have any new species? Look in the extensions folder for new pathways -
-
-
     # we need to add the biomass equation for cellmass -
     # which cellmass defn are we using
     path_to_cellmass_file = generate_path_to_cellmass_file(organism_id)
@@ -303,6 +351,11 @@ function generate_default_data_dictionary(organism_id::Symbol)
         # ok, so now we need to find the index of this component -
         index_of_species = find_index_of_species(cobra_dictionary["mets"],component_symbol)
 
+        # check - do we have a value for the species index?
+        if (index_of_species == nothing)
+            throw(ArgumentException("missing $(component_symbol) when constructing the biomass equation"))
+        end
+
         # update the entry in the biomass_eqn -
         biomass_eqn[index_of_species] = component_stoichiometric_coeff
     end
@@ -314,8 +367,11 @@ function generate_default_data_dictionary(organism_id::Symbol)
     (number_of_species,number_of_reactions) = size(stoichiometric_matrix)
 
     # objective coefficient array -
-    objective_coefficient_array = cobra_dictionary["c"]
-    objective_coefficient_array = [objective_coefficient_array ; 0.0] # add entry for growth -
+    objective_coefficient_array = zeros(number_of_reactions)
+    objective_coefficient_array_palsson = cobra_dictionary["c"]
+    for (index,objective_value) in enumerate(objective_coefficient_array_palsson)
+        objective_coefficient_array[index] = objective_value
+    end
 
     # Add growh to rev list (0 = not reversible, 1 = reversible)
     # reversible_reactions = cobra_dictionary["rev"]
@@ -333,6 +389,8 @@ function generate_default_data_dictionary(organism_id::Symbol)
         push!(reaction_name_array,rxn_name)
     end
 
+    # add growth to reaction name list -
+    push!(reaction_name_array,"growth")
 
     # get list of gene symbols -
     list_of_gene_symbols = cobra_dictionary["genes"]
@@ -383,14 +441,12 @@ function generate_default_data_dictionary(organism_id::Symbol)
     # correct the total_vmax_array for this model, using the rules -
     local_data_dictionary = Dict{String,Any}()
     local_data_dictionary["default_vmax_value"] = default_vmax
-    model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
+    #model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
 
     # update the default bounds array w/our "default" biophysical_constants -
-    flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
+    # flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
 
-    # create list of reaction strings -
-    list_of_reaction_tags = cobra_dictionary["rxns"]
-    list_of_reaction_tags = [list_of_reaction_tags ; "growth"]
+
 
     # What sense do we do? (by default we min)
     is_minimum_flag = true
@@ -407,16 +463,191 @@ function generate_default_data_dictionary(organism_id::Symbol)
 	data_dictionary["stoichiometric_matrix"] = stoichiometric_matrix
     data_dictionary["number_of_species"] = number_of_species
 	data_dictionary["number_of_reactions"] = number_of_reactions
-    data_dictionary["flux_bounds_array"] = flux_bounds_array
+    data_dictionary["flux_bounds_array"] = default_flux_bounds_array
     data_dictionary["species_bounds_array"] = species_bounds_array
     data_dictionary["objective_coefficient_array"] = objective_coefficient_array
 	data_dictionary["list_of_metabolite_symbols"] = list_of_metabolite_symbols
     data_dictionary["list_of_gene_symbols"] = list_of_gene_symbols
-    data_dictionary["list_of_reaction_name_strings"] = list_of_reaction_tags
+    data_dictionary["list_of_reaction_name_strings"] = reaction_name_array
     data_dictionary["list_of_chemical_reaction_strings"] = list_of_chemical_reaction_strings
 	data_dictionary["is_minimum_flag"] = is_minimum_flag
     data_dictionary["reversible_reaction_flag_array"] = reversible_reaction_flag_array
-    data_dictionary["model_vmax_array"] = model_vmax_array
+    #data_dictionary["model_vmax_array"] = model_vmax_array
+
+    # stuff for rules -
+    data_dictionary["default_vmax"] = default_vmax
+
+    # in case we need something later -
+    data_dictionary["cobra_dictionary"] = cobra_dictionary
+    # ========================================================================================= #
+    return data_dictionary
+end
+
+"""
+TODO: Fill me in with some stuff ...
+"""
+function generate_default_data_dictionary(organism_id::Symbol)
+
+    # Hardcode my path information -
+    path_to_cobra_mat_file = "$(path_to_package)/cobra/config/matlab_cobra_files/CoreCancerModel_v1.mat"
+    model_name = "CoreCancerModel_v1"
+
+    # load the biophysical_constants dictionary -
+    default_biophysical_dictionary = load_default_biophysical_dictionary(organism_id)
+
+    # TODO: check if string is a legit path to the cobra file, and the model name is ok
+    # load the *.mat code from the cobra code folder -
+    file = matopen(path_to_cobra_mat_file)
+    cobra_dictionary = read(file, model_name)
+    close(file)
+
+    # get some stuff that we may need later ...
+    # get the species symbol list -
+    list_of_metabolite_symbols = cobra_dictionary["mets"]
+
+    # Setup: the stoichiometric matrix -
+    stoichiometric_matrix = Matrix(cobra_dictionary["S"])
+    (number_of_species,number_of_reactions) = size(stoichiometric_matrix)
+
+    # we need to add the biomass equation for cellmass -
+    # which cellmass defn are we using
+    path_to_cellmass_file = generate_path_to_cellmass_file(organism_id)
+    biomass_eqn_data = readdlm(path_to_cellmass_file,',')
+    biomass_eqn = zeros(number_of_species)
+
+    # how many biomass components do we have?
+    number_of_biomass_species = length(biomass_eqn_data[:,1])
+    for biomass_component_index = 1:number_of_biomass_species
+
+        # get the component symbol and stcoeff -
+        component_symbol = biomass_eqn_data[biomass_component_index,1]
+        component_stoichiometric_coeff = biomass_eqn_data[biomass_component_index,2]
+
+        # ok, so now we need to find the index of this component -
+        index_of_species = find_index_of_species(cobra_dictionary["mets"],component_symbol)
+
+        # check - do we have a value for the species index?
+        if (index_of_species == nothing)
+            throw(ArgumentException("missing $(component_symbol) when constructing the biomass equation"))
+        end
+
+        # update the entry in the biomass_eqn -
+        biomass_eqn[index_of_species] = component_stoichiometric_coeff
+    end
+
+    # add the new *column* to the stoichometric array -
+    stoichiometric_matrix = [stoichiometric_matrix biomass_eqn]
+
+    # what is the *final* size of the system?
+    (number_of_species,number_of_reactions) = size(stoichiometric_matrix)
+
+    # objective coefficient array -
+    objective_coefficient_array = zeros(number_of_reactions)
+    objective_coefficient_array_palsson = cobra_dictionary["c"]
+    for (index,objective_value) in enumerate(objective_coefficient_array_palsson)
+        objective_coefficient_array[index] = objective_value
+    end
+
+    # Add growh to rev list (0 = not reversible, 1 = reversible)
+    # reversible_reactions = cobra_dictionary["rev"]
+    # reversible_reactions = [reversible_reactions ; 0.0]
+    # (number_of_fluxes, nc) = size(reversible_reactions)
+    # reversible_reaction_array = zeros(number_of_fluxes)
+    # for index = 1:number_of_fluxes
+    #     reversible_reaction_array[index] = reversible_reactions[index][1]
+    # end
+
+    # # calculate the reaction name -
+    reaction_name_array_tmp = cobra_dictionary["rxns"]
+    reaction_name_array = String[]
+    for rxn_name in reaction_name_array_tmp
+        push!(reaction_name_array,rxn_name)
+    end
+
+    # add growth to reaction name list -
+    push!(reaction_name_array,"growth")
+
+    # get list of gene symbols -
+    list_of_gene_symbols = cobra_dictionary["genes"]
+
+    # default flux bounds array -
+    default_flux_bounds_array = zeros(number_of_reactions,2)
+    lb = cobra_dictionary["lb"] # lower bound -
+    ub = cobra_dictionary["ub"] # upper bound -
+    for reaction_index = 1:number_of_reactions - 1
+        default_flux_bounds_array[reaction_index,1] = lb[reaction_index]
+        default_flux_bounds_array[reaction_index,2] = ub[reaction_index]
+    end
+
+    # add default growth rate constraint?
+    default_flux_bounds_array[end,1] = 0.0
+    default_flux_bounds_array[end,2] = 1.0
+
+    # build reversible reaction flag array -
+    reversible_reaction_flag_array = ones(number_of_reactions)
+    for reaction_index = 1:number_of_reactions
+
+        if (default_flux_bounds_array[reaction_index,1] >= 0.0)
+            reversible_reaction_flag_array[reaction_index] = 0.0
+        end
+    end
+    exchange_flux_index_array = generate_exchange_flux_index_array(reaction_name_array,"EX_")
+
+    # all EX_ are reversible -
+    for exchange_index in exchange_flux_index_array
+        reversible_reaction_flag_array[exchange_index] = 1.0
+    end
+
+    # calculate the default vamx (based upon biophysical_constants/literature) -
+    (default_vmax, default_enzyme_concentration) = calculate_default_vmax(default_biophysical_dictionary)
+
+    # load the ec_number file -
+    path_to_ec_file::String = "$(path_to_package)/cobra/config/data/ec_numbers.dat"
+    ec_number_dictionary =  load_ec_mapping_file(path_to_ec_file)
+
+    # load the gene order array -
+    path_to_gene_file = "$(path_to_package)/cobra/config/data/gene_list.dat"
+    gene_order_array = load_gene_order_file(path_to_gene_file)
+
+    # calculate the vamx array -
+    path_to_brenda_data = "$(path_to_package)/cobra/config/data/ECN-CoreCancerModel-Palsson-SciReports-2017.json"
+    total_vmax_array = generate_vmax_array(path_to_brenda_data, default_biophysical_dictionary, gene_order_array, ec_number_dictionary)
+
+    # correct the total_vmax_array for this model, using the rules -
+    local_data_dictionary = Dict{String,Any}()
+    local_data_dictionary["default_vmax_value"] = default_vmax
+    #model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
+
+    # update the default bounds array w/our "default" biophysical_constants -
+    # flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
+
+
+
+    # What sense do we do? (by default we min)
+    is_minimum_flag = true
+
+    # construct the reaction string list -
+    list_of_chemical_reaction_strings = reconstruct_reaction_string_list(cobra_dictionary)
+
+    # setup default additional constaints array -
+    number_of_additional_constraints = 0
+    species_bounds_array = zeros((number_of_species + number_of_additional_constraints),2)
+
+    # =============================== DO NOT EDIT BELOW THIS LINE ============================== #
+	data_dictionary = Dict{String,Any}()
+	data_dictionary["stoichiometric_matrix"] = stoichiometric_matrix
+    data_dictionary["number_of_species"] = number_of_species
+	data_dictionary["number_of_reactions"] = number_of_reactions
+    data_dictionary["flux_bounds_array"] = default_flux_bounds_array
+    data_dictionary["species_bounds_array"] = species_bounds_array
+    data_dictionary["objective_coefficient_array"] = objective_coefficient_array
+	data_dictionary["list_of_metabolite_symbols"] = list_of_metabolite_symbols
+    data_dictionary["list_of_gene_symbols"] = list_of_gene_symbols
+    data_dictionary["list_of_reaction_name_strings"] = reaction_name_array
+    data_dictionary["list_of_chemical_reaction_strings"] = list_of_chemical_reaction_strings
+	data_dictionary["is_minimum_flag"] = is_minimum_flag
+    data_dictionary["reversible_reaction_flag_array"] = reversible_reaction_flag_array
+    #data_dictionary["model_vmax_array"] = model_vmax_array
 
     # stuff for rules -
     data_dictionary["default_vmax"] = default_vmax

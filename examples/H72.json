@@ -24,6 +24,7 @@
   },
 
   "exchange_flux_measurements":{
+
     "DM_atp_c_":{
         "mean_value":"1.07",
         "coefficient_of_variation":"0.1",
@@ -32,7 +33,7 @@
     },
     "EX_glc(e)":{
         "mean_value":"0.016826859653932702",
-        "coefficient_of_variation":"0.41001442994819676",
+        "coefficient_of_variation":"0.000000000000000041001442994819676",
         "units":"mmol/gDW-hr",
         "directionality":"input_fixed"
     },
@@ -68,7 +69,7 @@
     },
     "EX_lac_L(e)":{
       "mean_value":"0.20050035937283917",
-      "coefficient_of_variation":"0.2194728887677818",
+      "coefficient_of_variation":"0.00000002194728887677818",
       "units":"mmol/gDW-hr",
       "directionality":"free"
     },

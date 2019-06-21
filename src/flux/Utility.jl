@@ -21,34 +21,12 @@ function find_species_in_compartment(list_of_species,compartment_string)
     return index_array
 end
 
-function find_index_of_species(list_of_species,species_symbol)
+function find_index_of_reaction(list_of_reaction_tags, reaction_tag)
+    return findfirst(x->x=="$(reaction_tag)",list_of_reaction_tags)
+end
 
-    # how many items do we have?
-    number_of_items = length(list_of_species)
-
-    # default location is nothing -
-    location = nothing
-    counter = 1
-    is_ok_to_stop = false
-    while (is_ok_to_stop == false)
-
-        # get symbol =
-        test_symbol = list_of_species[counter]
-        if (test_symbol == species_symbol)
-            is_ok_to_stop = true
-            location = counter
-        else
-
-            if (counter>=number_of_items)
-                is_ok_to_stop = true
-            end
-
-            counter = counter + 1
-        end
-    end
-
-    # return -
-    return location
+function find_index_of_species(list_of_species, species_symbol)
+    return findfirst(x->x=="$(species_symbol)", list_of_species)
 end
 
 

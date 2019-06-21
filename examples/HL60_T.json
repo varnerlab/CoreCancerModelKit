@@ -20,6 +20,7 @@
     }
   },
   "exchange_flux_measurements": {
+
     "EX_glc(e)": {
       "units": "mmol/gDW-hr",
       "directionality": "input_fixed",
