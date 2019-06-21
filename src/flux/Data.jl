@@ -78,9 +78,13 @@ function constrain_specific_growth_rate(data_dictionary::Dict{String,Any}, path_
     upper_bound = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["upper_bound"])
     mean_value = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["mean_value"])
 
+    # compute a random factor -
+    random_factor = rand()
+    growth_rate = (1-random_factor)*lower_bound+random_factor*upper_bound
+
     # growth rate is *always* the last value -
-    copy_flux_bounds_array[end,1] = lower_bound
-    copy_flux_bounds_array[end,2] = upper_bound
+    copy_flux_bounds_array[end,1] = growth_rate
+    copy_flux_bounds_array[end,2] = growth_rate
 
     # update -
     data_dictionary["flux_bounds_array"] = copy_flux_bounds_array
