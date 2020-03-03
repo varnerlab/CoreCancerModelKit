@@ -93,7 +93,7 @@ function constrain_specific_growth_rate(data_dictionary::Dict{String,Any}, path_
     return data_dictionary
 end
 
-function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_measurements_file::String)
+function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_measurements_file::String; crowding_paramter::Float64 = 0.0044)
 
     # TODO: is the path_to_measurements_file legit?
     measurements_dictionary = JSON.parsefile(path_to_measurements_file)
@@ -137,6 +137,9 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
     for reaction_index = 1:number_of_reactions
         additional_constraint_array[end,reaction_index] = 1.0
     end
+
+    sba = data_dictionary["species_bounds_array"]
+    sba[end,2] = (1.0/crowding_paramter);
 
     # cache the additional constraints -
     data_dictionary["additional_constraint_array"] = additional_constraint_array
@@ -489,7 +492,7 @@ function generate_test_data_dictionary(organism_id::Symbol)
     data_dictionary["cobra_dictionary"] = cobra_dictionary
 
     # <a> -
-    data_dictionary["average_crowding_constraint_value"] = (1.0/0.0040);
+    data_dictionary["average_crowding_constraint_value"] = 0.0040;  # hardcode the PNAS value -
     # ========================================================================================= #
     return data_dictionary
 end

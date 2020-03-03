@@ -178,7 +178,7 @@ end
 """
 TODO: Fill me in with some stuff ...
 """
-function maximize_specific_growth_rate(path_to_measurements_file::String, organism_id::Symbol; number_of_samples::Int64 = 100)
+function maximize_specific_growth_rate(path_to_measurements_file::String, organism_id::Symbol; number_of_samples::Int64 = 100, crowding::Float64 = 0.0044)
 
     # initalize -
     results_array = Array{VLOptimalFluxResult,1}()
@@ -196,7 +196,7 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
         updated_data_dictionary = optimize_specific_growth_rate(default_data_dictionary);
 
         # update dictionary with experimental data?
-        updated_data_dictionary = constrain_measured_fluxes(updated_data_dictionary, path_to_measurements_file);
+        updated_data_dictionary = constrain_measured_fluxes(updated_data_dictionary, path_to_measurements_file; crowding_paramter=crowding);
         updated_data_dictionary = constrain_measured_metabolites(updated_data_dictionary, path_to_measurements_file);
 
         # estimate the optimal flux distrubution -
