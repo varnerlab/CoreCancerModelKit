@@ -51,14 +51,6 @@ git-tree-sha1 = "f60954495a7afcee4136f78d1d60350abd37a409"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.4.1"
 
-[[CodeGenerator]]
-deps = ["Dates", "DelimitedFiles", "JSON", "MAT"]
-git-tree-sha1 = "4b4f606ea2846d1212b85a51fd157980e34e33cf"
-repo-rev = "master"
-repo-url = "https://github.com/varnerlab/CodeGenerator.git"
-uuid = "5394bec8-2a28-11e9-13cd-cd3a496faaa2"
-version = "0.1.0"
-
 [[CommonSubexpressions]]
 deps = ["Test"]
 git-tree-sha1 = "efdaf19ab11c7889334ca247ff4c9f7c322817b0"

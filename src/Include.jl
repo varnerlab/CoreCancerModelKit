@@ -12,7 +12,6 @@ using DelimitedFiles
 using Optim
 using Logging
 using ProgressMeter
-using CodeGenerator
 # ------------------------------------------------------------------ #
 
 # constants -
