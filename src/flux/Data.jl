@@ -109,7 +109,7 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
     # initialize -
     number_of_additional_constraints = length(flux_ratio_dictionary_array)
     constraint_counter = 1
-    additional_constraint_array = zeros(number_of_additional_constraints,number_of_reactions)
+    additional_constraint_array = zeros((number_of_additional_constraints + 1),number_of_reactions)
     for (reaction_key, local_measurement_dict) in flux_ratio_dictionary_array
 
         # ok, so we have a reaction key - find the index of this reaction in the reaction list -
@@ -131,6 +131,11 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
             # update -
             constraint_counter = constraint_counter + 1
         end
+    end
+
+    # crowding -
+    for reaction_index = 1:number_of_reactions
+        additional_constraint_array[end,reaction_index] = 1.0
     end
 
     # cache the additional constraints -
@@ -266,7 +271,6 @@ function generate_path_to_cellmass_file(organism_id)
 
     return "$(path_to_package)/cobra/config/data/cellmass/Default-Biomass.csv"
 end
-
 
 function constrain_measured_metabolites(data_dictionary::Dict{String,Any}, path_to_measurements_file::String)
 
@@ -450,8 +454,6 @@ function generate_test_data_dictionary(organism_id::Symbol)
     # update the default bounds array w/our "default" biophysical_constants -
     # flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
 
-
-
     # What sense do we do? (by default we min)
     is_minimum_flag = true
 
@@ -459,8 +461,10 @@ function generate_test_data_dictionary(organism_id::Symbol)
     list_of_chemical_reaction_strings = reconstruct_reaction_string_list(cobra_dictionary)
 
     # setup default additional constaints array -
-    number_of_additional_constraints = 0
+    number_of_additional_constraints = 1
     species_bounds_array = zeros((number_of_species + number_of_additional_constraints),2)
+    species_bounds_array[end,0] = 0.0
+    species_bounds_array[end,1] = (1.0/0.0040);
 
     # =============================== DO NOT EDIT BELOW THIS LINE ============================== #
 	data_dictionary = Dict{String,Any}()
@@ -483,6 +487,9 @@ function generate_test_data_dictionary(organism_id::Symbol)
 
     # in case we need something later -
     data_dictionary["cobra_dictionary"] = cobra_dictionary
+
+    # <a> -
+    data_dictionary["average_crowding_constraint_value"] = (1.0/0.0040);
     # ========================================================================================= #
     return data_dictionary
 end
