@@ -467,8 +467,8 @@ function generate_test_data_dictionary(organism_id::Symbol)
     # setup default additional constaints array -
     number_of_additional_constraints = 1
     species_bounds_array = zeros((number_of_species + number_of_additional_constraints),2)
-    species_bounds_array[end,0] = 0.0
-    species_bounds_array[end,1] = (1.0/0.0040);
+    species_bounds_array[end,1] = 0.0
+    species_bounds_array[end,2] = (1.0/0.0040);
 
     # =============================== DO NOT EDIT BELOW THIS LINE ============================== #
 	data_dictionary = Dict{String,Any}()
@@ -645,8 +645,10 @@ function generate_default_data_dictionary(organism_id::Symbol)
     list_of_chemical_reaction_strings = reconstruct_reaction_string_list(cobra_dictionary)
 
     # setup default additional constaints array -
-    number_of_additional_constraints = 0
+    number_of_additional_constraints = 1
     species_bounds_array = zeros((number_of_species + number_of_additional_constraints),2)
+    species_bounds_array[end,1] = 0.0
+    species_bounds_array[end,2] = (1.0/0.0040);
 
     # =============================== DO NOT EDIT BELOW THIS LINE ============================== #
 	data_dictionary = Dict{String,Any}()
