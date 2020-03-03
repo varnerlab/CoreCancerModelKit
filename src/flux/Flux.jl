@@ -157,7 +157,8 @@ function calculate_optimal_flux_distribution(data_dictionary)
 
     # Setup problem constraints for the metabolites -
     species_bounds_array = data_dictionary["species_bounds_array"]
-    for species_index = 1:number_of_species
+    (number_of_species_constraints,number_of_cols) = size(species_bounds_array) 
+    for species_index = 1:number_of_species_constraints
 
     	species_lower_bound = species_bounds_array[species_index,1]
     	species_upper_bound = species_bounds_array[species_index,2]
