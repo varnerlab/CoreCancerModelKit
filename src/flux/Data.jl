@@ -138,6 +138,8 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
         additional_constraint_array[end,reaction_index] = 1.0
     end
 
+    @show additional_constraint_array
+
     # cache the additional constraints -
     data_dictionary["additional_constraint_array"] = additional_constraint_array
 
