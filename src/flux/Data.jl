@@ -93,7 +93,7 @@ function constrain_specific_growth_rate(data_dictionary::Dict{String,Any}, path_
     return data_dictionary
 end
 
-function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_measurements_file::String; crowding_paramter::Float64 = 0.0044)
+function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_measurements_file::String; crowding_parameter::Float64 = 0.0044)
 
     # TODO: is the path_to_measurements_file legit?
     measurements_dictionary = JSON.parsefile(path_to_measurements_file)
@@ -139,7 +139,7 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
     end
 
     sba = data_dictionary["species_bounds_array"]
-    sba[end,2] = (1.0/crowding_paramter);
+    sba[end,2] = (1.0/crowding_parameter);
     data_dictionary["species_bounds_array"] = sba
 
     # cache the additional constraints -
