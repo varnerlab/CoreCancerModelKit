@@ -161,7 +161,9 @@ function calculate_optimal_flux_distribution(data_dictionary)
     for species_index = 1:number_of_species_constraints
 
     	species_lower_bound = species_bounds_array[species_index,1]
-    	species_upper_bound = species_bounds_array[species_index,2]
+        species_upper_bound = species_bounds_array[species_index,2]
+        
+        @show (species_index, species_lower_bound, species_upper_bound)
 
     	# defualt
     	species_constraint_type = GLPK.FX
@@ -175,7 +177,6 @@ function calculate_optimal_flux_distribution(data_dictionary)
     	# Set the species bounds in GLPK -
     	GLPK.set_row_name(lp_problem, species_index, species_symbol);
     	GLPK.set_row_bnds(lp_problem, species_index, species_constraint_type, species_lower_bound, species_upper_bound);
-
     end
 
     # Setup the stoichiometric array -

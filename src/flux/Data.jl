@@ -140,6 +140,7 @@ function constrain_measured_fluxes(data_dictionary::Dict{String,Any}, path_to_me
 
     sba = data_dictionary["species_bounds_array"]
     sba[end,2] = (1.0/crowding_paramter);
+    data_dictionary["species_bounds_array"] = sba
 
     # cache the additional constraints -
     data_dictionary["additional_constraint_array"] = additional_constraint_array
