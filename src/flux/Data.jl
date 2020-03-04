@@ -631,12 +631,10 @@ function generate_default_data_dictionary(organism_id::Symbol)
     # correct the total_vmax_array for this model, using the rules -
     local_data_dictionary = Dict{String,Any}()
     local_data_dictionary["default_vmax_value"] = default_vmax
-    #model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
+    model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
 
     # update the default bounds array w/our "default" biophysical_constants -
-    # flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
-
-
+    flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
 
     # What sense do we do? (by default we min)
     is_minimum_flag = true
