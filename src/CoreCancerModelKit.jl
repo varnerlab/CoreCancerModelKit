@@ -18,6 +18,7 @@ export optimize_flux_at_index
 export constrain_measured_fluxes
 export constrain_measured_metabolites
 export constrain_specific_growth_rate
+export bound_specific_growth_rate
 
 export generate_csv_flux_report
 

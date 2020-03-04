@@ -62,6 +62,30 @@ function optimize_flux_at_index(index_array::Array{Int64,1}, data_dictionary::Di
     return data_dictionary
 end
 
+function bound_specific_growth_rate(data_dictionary::Dict{String,Any}, path_to_growth_rate_file::String)
+
+    # TODO: check the growth rate file -
+    growth_rate_dictionary = JSON.parsefile(path_to_growth_rate_file)
+
+    # get the flux bounds -
+    copy_flux_bounds_array = deepcopy(data_dictionary["flux_bounds_array"])
+
+    # get the lower_bound, and upper_bound -
+    lower_bound = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["lower_bound"])
+    upper_bound = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["upper_bound"])
+    mean_value = parse(Float64,growth_rate_dictionary["specific_growth_rate_measurement"]["mean_value"])
+
+    # growth rate is *always* the last value -
+    copy_flux_bounds_array[end,1] = lower_bound
+    copy_flux_bounds_array[end,2] = upper_bound
+
+    # update -
+    data_dictionary["flux_bounds_array"] = copy_flux_bounds_array
+
+    # return -
+    return data_dictionary
+end
+
 """
 TODO: Fill me in with some stuff ...
 """
