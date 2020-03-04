@@ -23,5 +23,6 @@ export generate_csv_flux_report
 
 # export types -
 export VLOptimalFluxResult
+export VLOptimalConvexFluxResult
 
 end # module
