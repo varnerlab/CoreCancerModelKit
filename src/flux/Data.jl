@@ -83,7 +83,7 @@ function constrain_specific_growth_rate(data_dictionary::Dict{String,Any}, path_
     growth_rate = (1-random_factor)*lower_bound+random_factor*upper_bound
 
     # growth rate is *always* the last value -
-    copy_flux_bounds_array[end,1] = growth_rate
+    copy_flux_bounds_array[end,1] = 0.0
     copy_flux_bounds_array[end,2] = growth_rate
 
     # update -
