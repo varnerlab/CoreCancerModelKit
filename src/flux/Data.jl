@@ -631,10 +631,26 @@ function generate_default_data_dictionary(organism_id::Symbol)
     # correct the total_vmax_array for this model, using the rules -
     local_data_dictionary = Dict{String,Any}()
     local_data_dictionary["default_vmax_value"] = default_vmax
-    model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
+    #model_vmax_array = calculate_rules_vector(local_data_dictionary, total_vmax_array)
 
     # update the default bounds array w/our "default" biophysical_constants -
-    flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
+    #flux_bounds_array = update_default_flux_bounds_array(default_flux_bounds_array, model_vmax_array, reversible_reaction_flag_array)
+    (number_of_bounds, number_of_cols) = size(default_flux_bounds_array)
+    flux_bounds_array = zeros(number_of_bounds,2)
+    for bound_index = 1:number_of_bounds
+        
+        lower_bound = default_flux_bounds_array[bound_index,1]
+        upper_bound = default_flux_bounds_array[bound_index,2]
+
+        if (lower_bound!=0.0)
+            flux_bounds_array[bound_index,1] = sign(lower_bound)*default_vmax
+        end
+
+        if (upper_bound!=0.0)
+            flux_bounds_array[bound_index,2] = sign(upper_bound)*default_vmax
+        end
+    end
+
 
     # What sense do we do? (by default we min)
     is_minimum_flag = true
@@ -653,7 +669,7 @@ function generate_default_data_dictionary(organism_id::Symbol)
 	data_dictionary["stoichiometric_matrix"] = stoichiometric_matrix
     data_dictionary["number_of_species"] = number_of_species
 	data_dictionary["number_of_reactions"] = number_of_reactions
-    data_dictionary["flux_bounds_array"] = default_flux_bounds_array
+    data_dictionary["flux_bounds_array"] = flux_bounds_array
     data_dictionary["species_bounds_array"] = species_bounds_array
     data_dictionary["objective_coefficient_array"] = objective_coefficient_array
 	data_dictionary["list_of_metabolite_symbols"] = list_of_metabolite_symbols
