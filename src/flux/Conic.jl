@@ -40,14 +40,14 @@ function convex_flux_estimation(path_to_measurements_file::String, organism_id::
         
         # variabes and constraints -
         v = Variable(number_of_fluxes)
-        residual = norm(S*v-b)
-        p = minimize(residual)
+        p = minimize(sumsquares(S*v-b))
         p.constraints += [sum(abs(v))<=flux_budget]
         p.constraints += [v>=LB]
         p.constraints += [v<=UB]
 
         # solve -
-        Convex.solve!(p, SCSSolver(verbose = true))
+        opt = () -> SCS.Optimizer(verbose=false, max_iters=10000)
+        Convex.solve!(p, opt, warmstart=true)
         
         # get status flags, keep good solutions -
         status_flag = p.status
