@@ -107,7 +107,7 @@ function constrain_specific_growth_rate(data_dictionary::Dict{String,Any}, path_
     growth_rate = (1-random_factor)*lower_bound+random_factor*upper_bound
 
     # growth rate is *always* the last value -
-    copy_flux_bounds_array[end,1] = 0.0
+    copy_flux_bounds_array[end,1] = growth_rate
     copy_flux_bounds_array[end,2] = growth_rate
 
     # update -
@@ -667,7 +667,7 @@ function generate_default_data_dictionary(organism_id::Symbol)
         upper_bound = default_flux_bounds_array[bound_index,2]
 
         if (lower_bound!=0.0)
-            flux_bounds_array[bound_index,1] = 0.01*sign(lower_bound)*default_vmax
+            flux_bounds_array[bound_index,1] = sign(lower_bound)*default_vmax
         end
 
         if (upper_bound!=0.0)
