@@ -392,8 +392,18 @@ function calculate_rules_vector(data_dictionary::Dict{String,Any}, value_array::
 	v[377] = default()
 	v[378] = default()
 	v[379] = default()
+	
+	# I had to add these ... 
 	v[380] = default()
-	v[381] = 1.0	# growth -
+	v[381] = default()
+	v[382] = default()
+	v[383] = default()
+	v[384] = default()
+	v[385] = default()
+	v[386] = default()
+	v[387] = default()
+	v[388] = default()
+	v[389] = 1.0	# growth -
 
 	return v
 end
