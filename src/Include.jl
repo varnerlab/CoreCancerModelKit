@@ -13,6 +13,8 @@ using Optim
 using Logging
 using ProgressMeter
 using Convex
+using SCS
+using ECOS
 # ------------------------------------------------------------------ #
 
 # constants -
