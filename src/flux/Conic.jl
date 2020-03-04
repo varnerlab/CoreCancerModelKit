@@ -46,8 +46,7 @@ function convex_flux_estimation(path_to_measurements_file::String, organism_id::
         p.constraints += [v<=UB]
 
         # solve -
-        opt = () -> SCS.Optimizer(verbose=false, max_iters=10000)
-        Convex.solve!(p, opt, warmstart=true)
+        Convex.solve!(p, SCSSolver(verbose=false, max_iters=10000), warmstart=true)
         
         # get status flags, keep good solutions -
         status_flag = p.status
