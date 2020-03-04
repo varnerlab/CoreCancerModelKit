@@ -200,13 +200,6 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
         updated_data_dictionary = constrain_measured_metabolites(updated_data_dictionary, path_to_measurements_file);
 
         # estimate the optimal flux distrubution -
-        (objective_value_tmp, calculated_flux_array_tmp, dual_value_array_tmp, uptake_array_tmp, exit_flag_tmp, status_flag_tmp) = calculate_optimal_flux_distribution(updated_data_dictionary);
-
-        # re-run w/-1's in the crowding cosntaint -
-        idx_negative = findall(x->x<0.0,calculated_flux_array_tmp)
-        add_constraint = updated_data_dictionary["additional_constraint_array"]
-        add_constraint[end,idx_negative] .= -10.0
-        updated_data_dictionary["additional_constraint_array"] = add_constraint
         (objective_value, calculated_flux_array, dual_value_array, uptake_array, exit_flag, status_flag) = calculate_optimal_flux_distribution(updated_data_dictionary);
 
         # check the solution quality -
