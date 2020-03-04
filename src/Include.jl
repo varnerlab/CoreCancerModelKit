@@ -12,6 +12,7 @@ using DelimitedFiles
 using Optim
 using Logging
 using ProgressMeter
+using Convex
 # ------------------------------------------------------------------ #
 
 # constants -
@@ -30,4 +31,5 @@ include("./flux/Solve.jl")
 include("./flux/MOMA.jl")
 include("./flux/Reporting.jl")
 include("./flux/Extensions.jl")
+include("./flux/Conic.jl")
 include("ErrorChecking.jl")
