@@ -33,6 +33,7 @@ mutable struct VLOptimalConvexFluxResult
     flux_array::Array{Float64,1}
     status_flag::Symbol
     flux_bounds_array::Array{Float64,2}
+    estimated_metabolite_array::Array{Float64,1}
 
     # constructor -
     function VLOptimalConvexFluxResult()
