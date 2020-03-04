@@ -50,8 +50,8 @@ function convex_flux_estimation(path_to_measurements_file::String, organism_id::
         Convex.solve!(p, SCSSolver(verbose = true))
         
         # get status flags, keep good solutions -
-        status_flag = p.status, 
-        calculated_flux_array = v.value, 
+        status_flag = p.status
+        calculated_flux_array = v.value 
         objective_value = p.optval
 
         # do we have an optimal soln?
@@ -74,12 +74,22 @@ function convex_flux_estimation(path_to_measurements_file::String, organism_id::
 
             # update the progress bar -
             ProgressMeter.next!(p; showvalues = [(:status,msg)]);
-        end
+        else
+            # user message -
+            msg = "Failed: optimal was not solution found. Completed $(sample_index) of $(number_of_samples) trials ...";
 
+            # update the progress bar -
+            ProgressMeter.next!(p; showvalues = [(:status,msg)]);
+        end
     end
 
     # compute the ensemble -
     @info "Completed ...\r";
+
+     # check - did we fail *all* the trials?
+     if (isempty(results_array) == true)
+        throw(ErrorException("Ooops! All trials failed. Please check your problem setup ..."))
+    end
 
     # how many flux are there?
     number_of_fluxes = length(results_array[1].flux_array);
