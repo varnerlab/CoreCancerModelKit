@@ -4,7 +4,7 @@ function convex_flux_estimation(path_to_measurements_file::String, organism_id::
     results_array = Array{VLOptimalConvexFluxResult,1}()
 
     # Declare a progress meter for user feedback -
-    p = Progress(number_of_samples,color=:yellow)
+    p_meter = Progress(number_of_samples,color=:yellow)
 
     # what is my flux budget?
     flux_budget = (1/crowding_parameter)
@@ -73,13 +73,13 @@ function convex_flux_estimation(path_to_measurements_file::String, organism_id::
             msg = "Success: optimal solution found. Completed $(sample_index) of $(number_of_samples) trials ...";
 
             # update the progress bar -
-            ProgressMeter.next!(p; showvalues = [(:status,msg)]);
+            ProgressMeter.next!(p_meter; showvalues = [(:status,msg)]);
         else
             # user message -
             msg = "Failed: optimal was not solution found. Completed $(sample_index) of $(number_of_samples) trials ...";
 
             # update the progress bar -
-            ProgressMeter.next!(p; showvalues = [(:status,msg)]);
+            ProgressMeter.next!(p_meter; showvalues = [(:status,msg)]);
         end
     end
 
