@@ -98,7 +98,7 @@ function calculate_optimal_flux_distribution(data_dictionary)
     stoichiometric_matrix = [tmp_stoichiometric_matrix ; additional_constraint_array];
     (number_of_species,number_of_fluxes) = size(stoichiometric_matrix);
 
-    @show(number_of_species, stoichiometric_matrix[end,:])
+    # @show(number_of_species, stoichiometric_matrix[end,:])
 
     # # Setup the GLPK problem -
     lp_problem = GLPK.Prob();
@@ -165,7 +165,7 @@ function calculate_optimal_flux_distribution(data_dictionary)
     	species_lower_bound = species_bounds_array[species_index,1]
         species_upper_bound = species_bounds_array[species_index,2]
         
-        @show (species_index, species_lower_bound, species_upper_bound)
+        #@show (species_index, species_lower_bound, species_upper_bound)
 
     	# defualt
     	species_constraint_type = GLPK.FX
