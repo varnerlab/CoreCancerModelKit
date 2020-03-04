@@ -643,7 +643,7 @@ function generate_default_data_dictionary(organism_id::Symbol)
         upper_bound = default_flux_bounds_array[bound_index,2]
 
         if (lower_bound!=0.0)
-            flux_bounds_array[bound_index,1] = 0.01*sign(lower_bound)*default_vmax
+            flux_bounds_array[bound_index,1] = 0.001*sign(lower_bound)*default_vmax
         end
 
         if (upper_bound!=0.0)
