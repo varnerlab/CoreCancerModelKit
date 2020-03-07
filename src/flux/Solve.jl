@@ -187,7 +187,9 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
     p = Progress(number_of_samples,color=:yellow)
 
     # ok, so lets sample ...
-    for sample_index = 1:number_of_samples
+    should_loop_stop = false
+    sample_index = 1
+    while (should_loop_stop == false)
 
         # load the default data_dictionary -
         default_data_dictionary = generate_default_data_dictionary(organism_id);
@@ -225,6 +227,12 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
 
             # update the progress bar -
             ProgressMeter.next!(p; showvalues = [(:status,msg)]);
+
+            # update the counter -
+            sample_index = sample_index + 1
+            if (sample_index>=number_of_samples)
+                should_loop_stop = true
+            end
         else
             # user message -
             msg = "Failed: $(sample_index) of $(number_of_samples) trials ...";
