@@ -238,7 +238,8 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
             msg = "Failed: $(sample_index) of $(number_of_samples) trials ...";
 
             # update the progress bar -
-            ProgressMeter.next!(p; showvalues = [(:status,msg)]);
+            #ProgressMeter.next!(p; showvalues = [(:status,msg)]);
+            @info "$(msg)\r"
         end
     end
 
