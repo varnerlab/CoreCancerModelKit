@@ -196,6 +196,7 @@ function maximize_specific_growth_rate(path_to_measurements_file::String, organi
 
         # pass the default dictionary to a customization method -
         updated_data_dictionary = optimize_specific_growth_rate(default_data_dictionary);
+        updated_data_dictionary = bound_specific_growth_rate(default_data_dictionary, path_to_measurements_file)
 
         # update dictionary with experimental data?
         updated_data_dictionary = constrain_measured_fluxes(updated_data_dictionary, path_to_measurements_file; crowding_parameter = crowding_parameter);
