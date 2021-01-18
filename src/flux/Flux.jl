@@ -132,9 +132,9 @@ function calculate_optimal_flux_distribution(data_dictionary)
 
     	# Check bounds type ... default is DB -
     	if (flux_upper_bound == flux_lower_bound)
-    		flux_constraint_type = GLPK.FX
+    		flux_constraint_type = GLPK.GLP_FX
     	else
-    		flux_constraint_type = GLPK.DB
+    		flux_constraint_type = GLPK.GLP_DB
     	end
 
         if (flux_upper_bound<flux_lower_bound)
@@ -168,9 +168,9 @@ function calculate_optimal_flux_distribution(data_dictionary)
         #@show (species_index, species_lower_bound, species_upper_bound)
 
     	# defualt
-    	species_constraint_type = GLPK.FX
+    	species_constraint_type = GLPK.GLP_FX
     	if (species_lower_bound != species_upper_bound)
-    		species_constraint_type = GLPK.DB
+    		species_constraint_type = GLPK.GLP_DB
     	end
 
     	# set the symbol -
