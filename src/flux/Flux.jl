@@ -101,7 +101,7 @@ function calculate_optimal_flux_distribution(data_dictionary)
     # @show(number_of_species, stoichiometric_matrix[end,:])
 
     # # Setup the GLPK problem -
-    lp_problem = GLPK.Prob();
+    llp_problem = GLPK.glp_create_prob();
     GLPK.set_prob_name(lp_problem, "sample");
     GLPK.set_obj_name(lp_problem, "objective")
 
