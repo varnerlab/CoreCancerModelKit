@@ -183,8 +183,8 @@ function calculate_optimal_flux_distribution(data_dictionary)
 
     # Setup the stoichiometric array -
     counter = 1;
-    row_index_array = zeros(Int,number_of_species*number_of_fluxes);
-    col_index_array = zeros(Int,number_of_species*number_of_fluxes);
+    row_index_array = zeros(Cint,number_of_species*number_of_fluxes);
+    col_index_array = zeros(Cint,number_of_species*number_of_fluxes);
     species_index_vector = collect(1:number_of_species);
     flux_index_vector = collect(1:number_of_fluxes);
     flat_stoichiometric_array = zeros(Float64,number_of_species*number_of_fluxes);
@@ -196,7 +196,7 @@ function calculate_optimal_flux_distribution(data_dictionary)
     		counter+=1;
     	end
     end
-    GLPK.glp_load_matrix(lp_problem, number_of_species*number_of_fluxes, row_index_array, col_index_array, flat_stoichiometric_array);
+    GLPK.glp_load_matrix(lp_problem, number_of_species*number_of_fluxes, GLPK.offset(row_index_array), GLPK.offset(col_index_array), GLPK.offset(flat_stoichiometric_array));
 
     # Call the solver -
     exit_flag = GLPK.glp_simplex(lp_problem, solver_parameters);
